@@ -1,3 +1,4 @@
-bottle~=0.12
+cherrypy~=3.8
+Jinja2~=2.8
 oauth2~=1.9
 requests~=2.7
