@@ -1,4 +1,5 @@
 from django.contrib import auth
+from django.contrib import sessions
 from django.db import models
 
 class Point(models.Model):
@@ -21,12 +22,15 @@ class Stop(models.Model):
         unique_together = (('destination', 'timestamp'),)
 
 class PlannedUberRequest(models.Model):
+    # A weak reference to a session to grab the access token.
+    session = models.ForeignKey(
+        sessions.models.Session,
+        blank=True, null=True, on_delete=models.SET_NULL)
+    product_id = models.TextField()
     pickup = models.ForeignKey(Point, related_name='+')
     destination = models.ForeignKey(Point, related_name='+')
     request_timestamp = models.DateTimeField()
-
-    class Meta:
-        unique_together = (('pickup', 'destination', 'request_timestamp'),)
+    issued = models.BooleanField(default=False)
 
 class Trip(models.Model):
     user = models.ForeignKey(auth.models.User)

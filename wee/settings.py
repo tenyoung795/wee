@@ -43,7 +43,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'uber_auth',
-    'wee_app',
+    'wee_app.apps.WeeAppConfig',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -110,6 +110,32 @@ STATIC_URL = '/static/'
 
 
 # Project-specific settings
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+        },
+        'wee_app': {
+            'handlers': ['console'],
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+        }
+    },
+}
 
 UBER_CLIENT_ID = 'K_pSgm5as7JJ7J0mnhe13CE-1GptQ80p'
 UBER_API_HOST = 'https://sandbox-api.uber.com'
