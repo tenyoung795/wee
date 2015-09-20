@@ -1,3 +1,4 @@
+import datetime
 from django.contrib import auth
 from django.contrib import sessions
 from django.db import models
@@ -16,10 +17,23 @@ class Hotel(models.Model):
 
 class Stop(models.Model):
     destination = models.ForeignKey(Point)
-    timestamp = models.DateTimeField()
+    timestamp = models.DateTimeField(blank=True, null=True)
 
     class Meta:
         unique_together = (('destination', 'timestamp'),)
+
+class PlannedUberRequestManager(models.Manager):
+    def compute_request(self,
+                        session=None, product_id=None,
+                        pickup_stop=None, destination_stop=None,
+                        start_time_recommender=None, max_wait=0):
+        recommended_start_time = start_time_recommender(pickup_stop,
+                                                        destination_stop)
+        return self.create(session=session,
+                           product_id=product_id,
+                           pickup=pickup_stop.destination,
+                           destination=destination_stop.destination,
+                           request_timestamp=recommended_start_time - max_wait)
 
 class PlannedUberRequest(models.Model):
     # A weak reference to a session to grab the access token.
@@ -31,6 +45,8 @@ class PlannedUberRequest(models.Model):
     destination = models.ForeignKey(Point, related_name='+')
     request_timestamp = models.DateTimeField()
     issued = models.BooleanField(default=False)
+
+    objects = PlannedUberRequestManager()
 
 class Trip(models.Model):
     user = models.ForeignKey(auth.models.User)
