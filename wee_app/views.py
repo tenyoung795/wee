@@ -5,6 +5,9 @@ from urllib.parse import quote
 
 _PRICELINE_API_FORMAT = 'http://www.priceline.com/api/hotelretail/listing/v3/{}/{}/{}/{}/{}'
 
+def index(request):
+    return render(request, 'wee_app/index.html')
+
 def hotels(request):
     search_term = request.GET['search-term']
     check_in = request.GET['check-in']
