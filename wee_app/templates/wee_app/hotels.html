@@ -14,12 +14,14 @@
 		<meta charset="utf-8" />
 		<title>Choose a Hotel</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="{% static 'wee_app/jquery-1.11.3.js' %}"></script>
+        <script src="{% static 'wee_app/wee.js' %}"></script>
 	</head>
 
 	<body>
         <table style="width=100%">
             {% for hotel in hotels %}
-            <tr>
+            <tr class="clickable-tr" data-href="{% url 'hello' %}">
                 <td>
                     <img src="{{ hotel.thumbnailURL }}"/>
                 </td>
