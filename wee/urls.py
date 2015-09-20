@@ -8,4 +8,5 @@ urlpatterns = [
 
     url(r'^admin/', include(admin.site.urls)),
     url(r'^accounts/', include('uber_auth.urls')),
+    url(r'^app/', include('wee_app.urls')),
 ]
