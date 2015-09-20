@@ -1,0 +1,385 @@
+/* Wee CSS
+   Big Red Hacks Project 2015
+ 
+   Ten-Young Guh
+   Rachael Wang
+*/
+
+html,
+p {
+	font-family: Calibri;
+	font-size: 20px;
+	color: #ffffff;
+}
+body {
+	margin: 0;
+}
+em {
+	font-style: italic;
+}
+strong {
+	font-weight: bold;
+}
+label, input {
+	display: block;
+	margin-bottom: 12px;
+}
+label {
+	margin-bottom: 10px;
+}
+/* Search form */
+.large {
+	width: 600px;
+	height: 45px;
+	font-size: 17px;
+	font-family: 'Calibri';
+	background-color: #000000;
+	opacity: 0.5;
+	border: transparent;
+	color: #ffffff;
+}
+.medium{
+	width: 300px;
+	height: 45px;
+	font-size: 14px;
+	font-family: 'Calibri';
+	background-color: #000000;
+	opacity: 0.5;
+	border: transparent;
+	color: #ffffff;
+}
+.aboveInput {
+	font-size: 20px;
+}
+.blurBg-false {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	margin-top: -150px;
+	margin-left: -70px;
+}
+.HeaderLogo {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	margin-left: -300px;
+	margin-top: -320px;
+}
+.WheelLogo {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	margin-left: -600px;
+	margin-top: -300px;
+}
+.SearchSave {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	margin-top: -320px;
+	margin-left: -100px;
+}
+.one {
+	background-size: cover;
+}
+.two {
+
+	background-size: cover;
+}
+.three {
+	background-size: cover;
+}
+.four {
+	background-size: cover;
+}
+.five {
+	background-size: cover;
+}
+.rand {
+	height: auto;
+	max-width: 100%;
+}
+.wrapper {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	margin-left: -95px;
+	margin-top: 200px;
+}
+.myButton {
+	background-color: transparent;
+	border: 3px solid #ffffff;
+	display: inline-block;
+	cursor: pointer;
+	color: #ffffff;
+	text-shadow: 2px 2px rgba(0,0,0,0.3);
+	font-family: Langdon;
+	font-size: 60px;
+	padding: 10px 25px;
+	text-decoration: none;
+	position: absolute;
+	top: 80%;
+}
+.myButton2 {
+	background-color: transparent;
+	border: 3px solid #ffffff;
+	display: inline-block;
+	cursor: pointer;
+	color: #ffffff;
+	text-shadow: 2px 2px rgba(0,0,0,0.3);
+	font-family: Langdon;
+	font-size: 45px;
+	padding: 10px 25px;
+	text-decoration: none;
+	position: absolute;
+	top: 100%;
+	margin-top:20px;
+}
+.myButton:hover {
+   	background: rgba(0,0,0,0.4); 
+   	color:rgba(255,255,255, 1);
+}
+.myButton2:hover {
+   	background: rgba(0,0,0,0.4); 
+   	color:rgba(255,255,255, 1);
+}
+.myButton:active {
+}
+.myButton2:active {
+}
+
+/* ---------------------------------------------------- */
+
+/* Rating symbol as a background image to the rating system */
+form .stars {
+	background: url("stars.png") repeat-x 0 0;
+	width: 150px;
+	margin: 0 auto;
+}
+
+form .stars input[type="radio"] {
+	position: absolute;
+	opacity: 0;
+	filter: alpha(opacity=0);
+}
+
+form .stars input[type="radio"].star-5:checked ~ span {width: 100%;}
+form .stars input[type="radio"].star-4:checked ~ span {width: 80%;}
+form .stars input[type="radio"].star-3:checked ~ span {width: 60%;}
+form .stars input[type="radio"].star-2:checked ~ span {width: 40%;}
+form .stars input[type="radio"].star-1:checked ~ span {width: 20%;}
+
+form .stars label {
+	display: block;
+	width: 30px;
+	height: 30px;
+	margin: 0!important;
+	padding: 0!important;
+	text-indent: -999em;
+	float: left;
+	position: relative;
+	z-index: 10;
+	background: transparent!important;
+	cursor: pointer;
+}
+
+form .stars label:hover ~ span {background-position: 0 -30px;}
+
+form .stars label.star-5:hover ~ span { width: 100% !important;}
+form .stars label.star-4:hover ~ span { width: 80% !important;}
+form .stars label.star-3:hover ~ span { width: 60% !important;}
+form .stars label.star-2:hover ~ span { width: 40% !important;}
+form .stars label.star-1:hover ~ span { width: 20% !important;}
+
+form .stars span {
+	display: block;
+	width: 0;
+	position: relative;
+	top: 0;
+	left: 0;
+	height: 30px;
+	background: url("stars.png") repeat-x 0 -60px;
+	-webkit-transition: -webkit-width 0.5s;
+	-moz-transition: -moz-width 0.5s;
+	-ms-transition: -ms-width 0.5s;
+	-o-transition: -o-width 0.5s;
+	transition: width 0.5s;
+}
+/* ---------------------------------------------------- */
+
+.menu-outer:hover ~ .menu-close {
+  margin-right:-100px;
+}
+.menu-outer:hover .bar { background:rgba(100,200,240,.9); }
+.menu-outer > nav ul { top:15%; }
+
+.menu-outer {
+  overflow: hidden;
+  position: fixed;
+  top: 0;
+  font-family: 'Langdon', 'Langdon';
+  z-index: 998;  
+  width: 100%;
+  left: 100%;
+  margin-left: -100px;
+  height: 200%;
+  background: rgba(0,0,0,0.7);  
+  -webkit-transition: all ease .7s;
+  -moz-transition: all ease .7s;
+  -ms-transition: all ease .7s;
+  -o-transition: all ease .7s;
+  transition: all ease .7s; 
+  -webkit-transform-origin: top left;
+  -moz-transform-origin: top left;
+  -ms-transform-origin: top left;
+  -o-transform-origin: top left;
+  transform-origin: top left;
+  -webkit-transform: rotate(-45deg);
+  -moz-transform: rotate(-45deg);
+  -ms-transform: rotate(-45deg);
+  -o-transform: rotate(-45deg);
+  transform: rotate(-45deg);
+}
+.menu-outer:hover {
+  /* background of the 'cover-up' */
+  background: rgba(0,0,0,0.8);
+  left: 0;
+  margin-left: 0;
+  
+  /* Required for black area to rotate into the screen */
+  -webkit-transform: rotate(0deg);
+  -moz-transform: rotate(0deg);
+  -ms-transform: rotate(0deg);
+  -o-transform: rotate(0deg);
+  transform: rotate(0deg);
+}
+.menu-icon {
+  z-index: 999;
+  position: absolute;
+  top: 58px;
+  left: 15px;
+  width: 30px;
+  pointer-events: none;
+  -webkit-transform: rotate(45deg);
+  -moz-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  -o-transform: rotate(45deg);
+  transform: rotate(45deg);
+  -webkit-transition: all ease .5s;
+  -moz-transition: all ease .5s;
+  -ms-transition: all ease .5s;
+  -o-transition: all ease .5s;
+  transition: all ease .5s;
+}
+.menu-icon .bar {
+  background: rgba(250,250,250,1);
+  width: 100%;
+  height: 5px;
+  margin: 0 0 5px;
+  -webkit-transition: all ease .5s;
+  -moz-transition: all ease .5s;
+  -ms-transition: all ease .5s;
+  -o-transition: all ease .5s;
+  transition: all ease .5s;
+}
+.menu-outer:hover > .menu-icon {
+  opacity: 1;
+}
+nav ul {
+  position:absolute;
+  width:100%;
+  padding: 0;
+  /*prevents possible click when not oppened*/
+  left: 10%;;
+  -webkit-transition: all ease .5s;
+  -moz-transition: all ease .5s;
+  -ms-transition: all ease .5s;
+  -o-transition: all ease .5s;
+  transition: all ease .5s;
+}
+.menu-outer:hover > nav ul {
+  left: 0;
+}
+nav li {
+  list-style:none;
+  text-align: center;
+  text-transform: uppercase;
+}
+nav li a {
+  font-size: 2em;
+  color: rgba(255,255,255,.8);
+  text-decoration: none;
+  margin: 0 auto;
+  padding: 20px;
+  display: block;
+  -webkit-transition: all ease .5s;
+  -moz-transition: all ease .5s;
+  -ms-transition: all ease .5s;
+  -o-transition: all ease .5s;
+  transition: all ease .5s;
+}
+nav li a:hover {
+  color: rgba(255,255,255,1);
+}
+@media screen and (max-width: 600px), screen and (max-height: 600px) {
+  nav ul {font-size:.75em;}
+  nav ul a {padding: 10px;}
+}
+.menu-close {
+  z-index: 9999;
+  position: fixed;
+  top: 0;
+  right: 100%;
+  width: 200px;
+  height: 200px;
+  background: rgba(250,130,70,1);
+  cursor: pointer;
+  -webkit-transition: all ease .5s;
+  -moz-transition: all ease .5s;
+  -ms-transition: all ease .5s;
+  -o-transition: all ease .5s;
+  transition: all ease .5s;
+  -webkit-transform-origin: top right;
+  -moz-transform-origin: top right;
+  -ms-transform-origin: top right;
+  -o-transform-origin: top right;
+  transform-origin: top right;
+  -webkit-transform: rotate(45deg);
+  -moz-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  -o-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+.menu-close .menu-icon {
+  right: 15px; left: auto;top: 68px;
+  -webkit-transform: rotate(-45deg);
+  -moz-transform: rotate(-45deg);
+  -ms-transform: rotate(-45deg);
+  -o-transform: rotate(-45deg);
+  transform: rotate(-45deg);
+}
+.menu-close .bar {
+  background: rgba(250,250,250,1);
+  width: 100%;
+  height: 5px;
+  position:absolute;
+  -webkit-transform-origin: center;
+  -moz-transform-origin: center;
+  -ms-transform-origin: center;
+  -o-transform-origin: center;
+  transform-origin: center;
+}
+.menu-close .bar:first-child {
+  -webkit-transform: rotate(45deg);
+  -moz-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  -o-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+.menu-close .bar:last-child {
+  -webkit-transform: rotate(-45deg);
+  -moz-transform: rotate(-45deg);
+  -ms-transform: rotate(-45deg);
+  -o-transform: rotate(-45deg);
+  transform: rotate(-45deg);
+}
