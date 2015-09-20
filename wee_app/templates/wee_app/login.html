@@ -1,3 +1,4 @@
+{% load staticfiles %}
 <!-- Wee HTML
    Big Red Hacks Project 2015
    Home Page
@@ -14,16 +15,16 @@
 	</head>
 
 	<body>
-		<link href="Wee.css" rel="stylesheet" type="text/css">
+		<link href="{% static 'wee_app/Wee.css' %}" rel="stylesheet" type="text/css">
 
-		<div class="one" style="height:100vh;background-image:url(HeadPicture1.png);"></div>
-		<div class="five" style="height:100vh;background-image:url(about.png);"></div>
-		<div class="two" style="height:100vh;background-image:url(HeadPicture2.png);"></div>
-		<div class="four" style="height:100vh;background-image:url(random.png);"></div>
-		<image class="rand" src="footer.png">
+		<div class="one" style="height:100vh;background-image:url({% static 'wee_app/HeadPicture1.png' %});"></div>
+		<div class="five" style="height:100vh;background-image:url({% static 'wee_app/about.png' %});"></div>
+		<div class="two" style="height:100vh;background-image:url({% static 'wee_app/HeadPicture2.png' %});"></div>
+		<div class="four" style="height:100vh;background-image:url({% static 'wee_app/random.png' %});"></div>
+		<image class="rand" src="{% static 'wee_app/footer.png' %}">
 
 		<div class="HeaderLogo">
-			<img src="HeaderLogo.png">
+			<img src="{% static 'wee_app/HeaderLogo.png' %}">
 		</div>
 
 		<p style="position: absolute; bottom:0; width:100%; text-align: center"> OR JOIN THE FUN AND SIGN UP!
@@ -37,7 +38,7 @@
     		</div>
     		<nav>
         		<ul>
-           			<li><a href="#"><a href="file:///Users/rachaelpwang/Desktop/Wee/WeeSearchPage.html" target=_self>plan a trip</a></a></li>
+           			<li><a href="#"><a href='#' target=_self>plan a trip</a></a></li>
            			<li><a href="#">about</a></li>
             		<li><a href="#">contact</a></li>
       			</ul>
