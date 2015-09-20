@@ -1,4 +1,3 @@
-from django.http import HttpResponse
 from django.shortcuts import render
 import requests
 from urllib.parse import quote
@@ -14,9 +13,11 @@ def hotels(request):
     check_out = request.GET['check-out']
     num_rooms = request.GET['num-rooms']
     page_size = 20
-    
+
     response = requests.get(_PRICELINE_API_FORMAT.format(
         quote(search_term), quote(check_in), quote(check_out), quote(num_rooms),
         page_size))
     response.raise_for_status()
-    return HttpResponse(response.text, content_type='application/json')
+
+    return render(request, 'wee_app/hotels.html',
+                  context={'hotels': response.json()['hotels'].values()})
