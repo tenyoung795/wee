@@ -3,6 +3,7 @@ from importlib import import_module
 from django.apps import AppConfig
 from django.conf import settings
 from django.contrib.sessions.backends.db import SessionStore
+from django.db import DatabaseError
 from django.db.models import signals
 from django.utils import timezone
 import logging
@@ -112,7 +113,10 @@ class WeeAppConfig(AppConfig):
                                    sender=PlannedUberRequest, weak=False)
         signals.post_save.connect(self._on_request_post_save,
                                   sender=PlannedUberRequest, weak=False)
-        for request in PlannedUberRequest.objects.filter(issued=False):
-            self._schedule_request(request)
+        try:
+            for request in PlannedUberRequest.objects.filter(issued=False):
+                self._schedule_request(request)
+        except DatabaseError as error:
+            logger.info('Hopefully, you are making or performing migrations')
 
         self._ran_ready = True
