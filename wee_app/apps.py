@@ -7,7 +7,6 @@ from django.db.models import signals
 from django.utils import timezone
 import logging
 import requests
-import signal
 import threading
 
 logger = logging.getLogger(__name__)
@@ -91,6 +90,7 @@ class WeeAppConfig(AppConfig):
         interval = request.request_timestamp - timezone.now()
         timer = threading.Timer(interval.seconds,
                                 self._send_request, (request,))
+        timer.daemon = True
         timer.start()
         self._request_ids_to_timers[request.id] = timer
 
@@ -109,15 +109,6 @@ class WeeAppConfig(AppConfig):
             return
 
         PlannedUberRequest = self.get_model('PlannedUberRequest')
-
-        # Django handles SIGINT so guaranteed not-None.
-        continue_sigint = signal.getsignal(signal.SIGINT)
-        def disconnect(signo, frame):
-            for timer in self._request_ids_to_timers.values():
-                timer.cancel()
-            continue_sigint(signo, frame)
-        signal.signal(signal.SIGINT, disconnect)
-
         signals.pre_delete.connect(self._on_request_pre_delete,
                                    sender=PlannedUberRequest, weak=False)
         signals.post_save.connect(self._on_request_post_save,
