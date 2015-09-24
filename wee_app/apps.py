@@ -84,7 +84,6 @@ class WeeAppConfig(AppConfig):
 
     def _cancel_request(self, request):
         self._request_ids_to_timers[request.id].cancel()
-        del self._request_ids_to_timers[request.id]
 
     def _schedule_request(self, request):
         interval = request.request_timestamp - timezone.now()
