@@ -7,9 +7,12 @@ from django.db import DatabaseError
 from django.db.models import signals
 from django.utils import timezone
 import logging
+import queue
 import requests
+import signal
 import threading
 
+SessionStore = import_module(settings.SESSION_ENGINE).SessionStore
 logger = logging.getLogger(__name__)
 
 def _simulate_request_progress(access_token, request_id):
@@ -50,38 +53,7 @@ class WeeAppConfig(AppConfig):
 
     _ran_ready = False
     _request_ids_to_timers = {}
-
-    @staticmethod
-    def _send_request(request):
-        session = request.session
-        if not session:
-            # Wait until an attached session is saved.
-            return
-        SessionStore = import_module(settings.SESSION_ENGINE).SessionStore
-        access_token = SessionStore(session_key=session.pk)['access_token']
-
-        # TODO: Actually check for using the refresh token.
-        product_response = requests.post(
-            settings.UBER_API_HOST + '/v1/requests',
-            json={
-                'product_id': request.product_id,
-                'start_latitude': request.pickup.latitude,
-                'start_longitude': request.pickup.longitude,
-                'end_latitude': request.destination.latitude,
-                'end_longitude': request.destination.longitude,
-            },
-            headers={'Authorization': 'Bearer ' + access_token})
-        # TODO: Somehow notify user of a failure.
-        product_response.raise_for_status()
-        request_id = product_response.json()['request_id']
-
-        request.issued = True
-        request.save()
-
-        logger.info('Issued request %s', request_id)
-
-        if settings.DEBUG:
-            _simulate_request_progress(access_token, request_id)
+    _request_queue = queue.Queue()
 
     def _cancel_request(self, request):
         self._request_ids_to_timers[request.id].cancel()
@@ -89,7 +61,7 @@ class WeeAppConfig(AppConfig):
     def _schedule_request(self, request):
         interval = request.request_timestamp - timezone.now()
         timer = threading.Timer(interval.seconds,
-                                self._send_request, (request,))
+                                self._request_queue.put, (request,))
         timer.daemon = True
         timer.start()
         self._request_ids_to_timers[request.id] = timer
@@ -108,6 +80,15 @@ class WeeAppConfig(AppConfig):
         if self._ran_ready:
             return
 
+        continue_sigint = signal.getsignal(signal.SIGINT)
+        def handle_sigint(signo, frame):
+            self._request_queue.join()
+            self._request_queue.put(None)
+
+            # TODO: Notify users about maintenance.
+            continue_sigint(signo, frame)
+        signal.signal(signal.SIGINT, handle_sigint)
+
         PlannedUberRequest = self.get_model('PlannedUberRequest')
         signals.pre_delete.connect(self._on_request_pre_delete,
                                    sender=PlannedUberRequest, weak=False)
@@ -118,5 +99,48 @@ class WeeAppConfig(AppConfig):
                 self._schedule_request(request)
         except DatabaseError as error:
             logger.info('Hopefully, you are making or performing migrations')
+
+        def process_requests():
+            while True:
+                request = self._request_queue.get()
+                if request is None:
+                    break
+
+                try:
+                    session = request.session
+                    if not session:
+                        # Wait until an attached session is saved.
+                        continue
+                    session_store = SessionStore(session_key=session.pk)
+                    access_token = session_store['access_token']
+
+                    # TODO: Actually check for using the refresh token.
+                    product_response = requests.post(
+                        settings.UBER_API_HOST + '/v1/requests',
+                        json={
+                            'product_id': request.product_id,
+                            'start_latitude': request.pickup.latitude,
+                            'start_longitude': request.pickup.longitude,
+                            'end_latitude': request.destination.latitude,
+                            'end_longitude': request.destination.longitude,
+                        },
+                        headers={'Authorization': 'Bearer ' + access_token})
+                    # TODO: Somehow notify user of a failure.
+                    product_response.raise_for_status()
+                    request_id = product_response.json()['request_id']
+
+                    request.issued = True
+                    request.save()
+
+                    logger.info('Issued request %s', request_id)
+
+                    if settings.DEBUG:
+                        _simulate_request_progress(access_token, request_id)
+                except:
+                    logging.exception('Error processing request %s', request.id)
+                    # TODO: Notify user.
+
+                self._request_queue.task_done()
+        threading.Thread(target=process_requests).start()
 
         self._ran_ready = True
