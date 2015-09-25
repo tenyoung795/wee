@@ -52,57 +52,56 @@ class WeeAppConfig(AppConfig):
     name = 'wee_app'
 
     _ran_ready = False
-    _request_ids_to_timers = {}
-    _request_queue = queue.Queue()
-
-    def _cancel_request(self, request):
-        self._request_ids_to_timers[request.id].cancel()
-
-    def _schedule_request(self, request):
-        interval = request.request_timestamp - timezone.now()
-        timer = threading.Timer(interval.seconds,
-                                self._request_queue.put, (request,))
-        timer.daemon = True
-        timer.start()
-        self._request_ids_to_timers[request.id] = timer
-
-    def _on_request_pre_delete(self, instance=None, **_):
-        if instance.id in self._request_ids_to_timers:
-            self._cancel_request(instance)
-
-    def _on_request_post_save(self, instance=None, created=None, **_):
-        if not created:
-            self._cancel_request(instance)
-        if not instance.issued:
-            self._schedule_request(instance)
 
     def ready(self):
         if self._ran_ready:
             return
 
+        request_queue = queue.Queue()
+        timers = {}
+
         continue_sigint = signal.getsignal(signal.SIGINT)
         def handle_sigint(signo, frame):
-            self._request_queue.join()
-            self._request_queue.put(None)
+            request_queue.join()
+            request_queue.put(None)
 
             # TODO: Notify users about maintenance.
             continue_sigint(signo, frame)
         signal.signal(signal.SIGINT, handle_sigint)
 
         PlannedUberRequest = self.get_model('PlannedUberRequest')
-        signals.pre_delete.connect(self._on_request_pre_delete,
+
+        def cancel_request(request):
+            timers[request.id].cancel()
+        def on_pre_delete(instance=None, **_):
+            if instance.id in timers:
+                cancel_request(instance)
+        signals.pre_delete.connect(on_pre_delete,
                                    sender=PlannedUberRequest, weak=False)
-        signals.post_save.connect(self._on_request_post_save,
+
+        def schedule_request(request):
+            interval = request.request_timestamp - timezone.now()
+            timer = threading.Timer(interval.seconds, request_queue.put, (request,))
+            timer.daemon = True
+            timer.start()
+            timers[request.id] = timer
+        def on_post_save(instance=None, created=None, **_):
+            if not created:
+                cancel_request(instance)
+            if not instance.issued:
+                schedule_request(instance)
+        signals.post_save.connect(on_post_save,
                                   sender=PlannedUberRequest, weak=False)
+
         try:
             for request in PlannedUberRequest.objects.filter(issued=False):
-                self._schedule_request(request)
+                schedule_request(request)
         except DatabaseError as error:
             logger.info('Hopefully, you are making or performing migrations')
 
         def process_requests():
             while True:
-                request = self._request_queue.get()
+                request = request_queue.get()
                 if request is None:
                     break
 
@@ -140,7 +139,7 @@ class WeeAppConfig(AppConfig):
                     logging.exception('Error processing request %s', request.id)
                     # TODO: Notify user.
 
-                self._request_queue.task_done()
+                request_queue.task_done()
         threading.Thread(target=process_requests).start()
 
         self._ran_ready = True
